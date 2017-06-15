@@ -1,0 +1,38 @@
+{
+  "name": "epii-html5",
+  "version": "0.1.0",
+  "description": "HTML5 template for node server",
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "test": "eslint . && nyc --reporter=lcov mocha test",
+    "lcov": "nyc report --reporter=text-lcov | coveralls"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/epii-io/epii-node-html5.git"
+  },
+  "keywords": [
+    "epii",
+    "node",
+    "html5"
+  ],
+  "contributors": [
+    "Sartrey Lee <sartrey@163.com> (http://sartrey.cn/)"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/epii-io/epii-node-html5/issues"
+  },
+  "homepage": "https://github.com/epii-io/epii-node-html5#readme",
+  "devDependencies": {
+    "coveralls": "^2.13.1",
+    "eslint": "^3.19.0",
+    "mocha": "^3.4.2",
+    "nyc": "^11.0.2"
+  },
+  "false": {}
+}

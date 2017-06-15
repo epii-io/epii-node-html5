@@ -1,0 +1,11 @@
+npm-debug.log
+coverage
+lcov.info
+
+.eslintignore
+.eslintrc
+.gitignore
+.travis.yml
+
+bin
+test
