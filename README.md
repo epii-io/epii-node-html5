@@ -1,4 +1,5 @@
-# epii-node-html5
+# epii-html5
+###### `epii-node-html5`
 
 [![Build Status](https://travis-ci.org/epii-io/epii-node-html5.svg?branch=master)](https://travis-ci.org/epii-io/epii-node-html5)
 [![Coverage Status](https://coveralls.io/repos/github/epii-io/epii-node-html5/badge.svg?branch=master)](https://coveralls.io/github/epii-io/epii-node-html5?branch=master)
@@ -7,9 +8,90 @@ HTML5 template for node server
 
 ## Features
 
-### simple JSON template
+### not full-featured view layer
 
-HTML5 document can be described by the following javascript Object.
+`epii-html5` can only describe HTML5 bone document with initial state and render at server side.
+** Simple. Fast.**
+
+### simple JSON-like template
+
+HTML5 document can be described by a JS Object that looks very simple.
+Also you can write JS in meta file, since `loadViewMeta` using `require` to load meta.
+
+### builtin meta storage
+
+`epii-html5` provides builtin meta storage. There's no need to concern about meta cache.
+
+## Usage
+
+### install as dependency
+```sh
+npm install --save epii-html5@latest
+```
+
+### use api to output HTML5
+```js
+const HTML5 = require('epii-html5')
+
+// create view meta
+var meta = new HTML5.ViewMeta()
+
+// mount state & inline resource
+await meta.mount({ hello: 'world' })
+
+// also you can specify loader for resource
+await meta.mount({}, (asset, query) => (
+  fetch(asset.src)
+    .then(response => response.text())
+    .then(text => asset.source = text)
+))
+
+// render view to HTML5
+var html = HTML5.renderToString(meta)
+```
+
+### use api to output HTML with layout
+```js
+const HTML5 = require('epii-html5')
+
+// create meta pack
+var metaPack = new HTML5.MetaPack()
+
+// load layout meta
+var layout = metaPack.loadViewMeta({
+  name: 'simple',
+  head: {
+    title: 'simple',
+    styles: ['reset.css', 'theme.css'],
+    icon: 'logo.ico'
+  },
+  body: {
+    launch: { src: 'launch.js', inline: true }
+  }
+})
+
+// load view meta, auto inherit layout
+var meta = metaPack.loadViewMeta({
+  base: 'simple',
+  head: {
+    styles: 'index.css'
+  },
+  body: {
+    scripts: 'index.js'
+  }
+})
+
+// render view to HTML5
+var html = HTML5.renderToString(meta)
+```
+
+## Design
+
+### data structure
+
+`MetaPack` = [ `ViewMeta` = [ `AssetRef` ... ] ... ]
+
+### template
 
 ```js
 {
@@ -77,69 +159,12 @@ HTML5 document can be described by the following javascript Object.
 }
 ```
 
-### builtin meta storage
+### Benchmark
 
-`epii-html5` provides builtin meta storage. There's no need to concern about meta cache.
+The following table shows elapsed time for rendering bone document to string 1e5 times.
 
-## Usage
-
-### install as dependency
-```sh
-npm install --save epii-html5@latest
-```
-
-### use api to output HTML5
-```js
-const HTML5 = require('epii-html5')
-
-// create view meta
-var meta = new HTML5.ViewMeta()
-
-// mount state & inline resource
-meta.mount({ hello: 'world' })
-
-// also you can specify loader for resource
-meta.mount({}, (asset, query) => (
-  fetch(asset.src)
-    .then(response => response.text())
-    .then(text => asset.source = text)
-))
-
-// render view to HTML5
-var html = HTML5.renderToString(meta)
-```
-
-### use api to output HTML with layout
-```js
-const HTML5 = require('epii-html5')
-
-// create meta pack
-var metaPack = new HTML5.MetaPack()
-
-// load layout meta
-var layout = metaPack.loadViewMeta({
-  name: 'simple',
-  head: {
-    title: 'simple',
-    styles: ['reset.css', 'theme.css'],
-    icon: 'logo.ico'
-  },
-  body: {
-    launch: { src: 'launch.js', inline: true }
-  }
-})
-
-// load view meta, auto inherit layout
-var meta = metaPack.loadViewMeta({
-  base: 'simple',
-  head: {
-    styles: 'index.css'
-  },
-  body: {
-    scripts: 'index.js'
-  }
-})
-
-// render view to HTML5
-var html = HTML5.renderToString(meta)
-```
+|name|time|
+|-|-|
+|EPII|180ms|
+|handlebars|1300ms|
+|React|29000ms|

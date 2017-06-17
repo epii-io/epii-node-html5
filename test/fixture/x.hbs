@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8" />
+{{#each head.metas}}
+  {{#if name}}
+<meta name="{{name}}" content="{{{content}}}" />
+  {{else if http-equiv}}
+<meta http-equiv="{{http-equiv}}" content="{{{content}}}" />
+  {{/if}}
+{{/each}}
+{{#each head.styles}}
+  {{#if src}}
+<link href="{{src}}" rel="stylesheet" type="text/css">
+  {{else if source}}
+<style type="text/css">{{{source}}}</style>
+  {{/if}}
+{{/each}}
+{{#each head.scripts}}
+  {{#if src}}
+<script type="application/javascript" src="{{src}}">
+  {{else if source}}
+<script type="application/javascript">{{{source}}}</style>
+  {{/if}}
+{{/each}}
+<title>{{head.title}}</title>
+{{#if head.icon}}
+<link href="{{head.icon.src}}" rel="icon" type="{{head.icon.type}}">
+{{/if}}
+</head>
+<body>
+{{{body.holder.source}}}
+{{#each body.scripts}}
+  {{#if src}}
+<script src="{{src}}" type="{{type}}"></script>
+  {{else if source}}
+<script type="{{type}}">{{{source}}}</script>
+  {{/if}}
+{{/each}}
+</body>
+</html>

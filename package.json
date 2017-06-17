@@ -8,8 +8,9 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "test": "eslint . && nyc --reporter=lcov mocha test",
-    "lcov": "nyc report --reporter=text-lcov | coveralls"
+    "test": "eslint . && nyc --reporter=lcov mocha test/index.js",
+    "lcov": "nyc report --reporter=text-lcov | coveralls",
+    "mark": "bin/ready-mark && node test/benchmark.js"
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,5 @@
     "eslint": "^3.19.0",
     "mocha": "^3.4.2",
     "nyc": "^11.0.2"
-  },
-  "false": {}
+  }
 }
