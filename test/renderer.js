@@ -8,12 +8,12 @@ const ViewMeta = HTML5.ViewMeta
 const MetaPack = HTML5.MetaPack
 
 const rootDir = path.join(__dirname, 'fixture')
-const metaPack = new MetaPack({ source: rootDir })
+const metaPack = new MetaPack(rootDir, { source: rootDir })
 
 describe('renderToString', function () {
   it('render example a', async function () {
-    var metaZ = metaPack.loadViewMeta(path.join(rootDir, 'z.meta.js'))
-    var metaA = metaPack.loadViewMeta(path.join(rootDir, 'a.meta.js'))
+    var metaZ = metaPack.loadViewMeta('z.meta.js')
+    var metaA = metaPack.loadViewMeta('a.meta.js')
     await metaA.mount()
     var html = HTML5.renderToString(metaA)
     assert.equal(
@@ -23,7 +23,7 @@ describe('renderToString', function () {
   })
 
   it('render example b', async function () {
-    var metaB = metaPack.loadViewMeta(path.join(rootDir, 'b.meta.js'))
+    var metaB = metaPack.loadViewMeta('b.meta.js')
     await metaB.mount()
     var html = HTML5.renderToString(metaB)
     assert.equal(
@@ -33,7 +33,7 @@ describe('renderToString', function () {
   })
 
   it('render example c', async function () {
-    var metaC = metaPack.loadViewMeta(path.join(rootDir, 'c.meta.js'))
+    var metaC = metaPack.loadViewMeta('c.meta.js')
     await metaC.mount()
     var html = HTML5.renderToString(metaC)
     assert.equal(

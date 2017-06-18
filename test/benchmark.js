@@ -24,8 +24,8 @@ async function main() {
   await benchmark('epii', {
     launch: async function (context) {
       var HTML5 = require('../')
-      var metaPack = new HTML5.MetaPack({ source: rootDir })
-      var meta = metaPack.loadViewMeta(path.join(rootDir, 'x.meta.js'))
+      var metaPack = new HTML5.MetaPack(rootDir, { source: rootDir })
+      var meta = metaPack.loadViewMeta('x.meta.js')
       await meta.mount()
       context.HTML5 = HTML5
       context.meta = meta

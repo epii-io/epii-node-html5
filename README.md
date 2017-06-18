@@ -55,7 +55,7 @@ var html = HTML5.renderToString(meta)
 const HTML5 = require('epii-html5')
 
 // create meta pack
-var metaPack = new HTML5.MetaPack()
+var metaPack = new HTML5.MetaPack('/')
 
 // load layout meta
 var layout = metaPack.loadViewMeta({
