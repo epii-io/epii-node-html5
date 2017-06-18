@@ -39,20 +39,20 @@ describe('MetaPack', function () {
     var metaA = metaPack.loadViewMeta('a.meta.js')
     var meta0 = metaPack.loadViewMeta('0.meta.js')
     assert.deepEqual(metaA.head.metas, [
+      { name: 'test', content: 'test' },
       { http: 'test1', content: 'test' },
       { http: 'test2' },
-      {},
-      { name: 'test', content: 'test' }
+      {}
     ])
     assert.equal(metaA.head.title, 'a')
     assert.deepEqual(metaA.head.styles.map(s => s.src), [
-      'a.css', '', 'theme.css'
+      'theme.css', 'a.css', ''
     ])
     assert.deepEqual(metaA.head.scripts.map(s => s.src), [
-      'a1.js', 'theme.js'
+      'theme.js', 'a1.js'
     ])
     assert.deepEqual(metaA.body.scripts.map(s => s.src), [
-      'a2.js', 'layout.js'
+      'layout.js', 'a2.js'
     ])
     assert.equal(meta0.head.title, 'z')
     assert.equal(meta0.body.holder, null)
