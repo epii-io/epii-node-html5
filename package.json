@@ -1,6 +1,6 @@
 {
   "name": "epii-html5",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "HTML5 template for node server",
   "engines": {
     "node": ">=8.0.0"
@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "test": "eslint . && nyc --reporter=lcov mocha test/index.js",
+    "test": "eslint . && nyc --reporter=lcov mocha test/index.js --exit",
     "lcov": "nyc report --reporter=text-lcov | coveralls",
     "mark": "bin/ready-mark && node test/benchmark.js"
   },
@@ -30,9 +30,9 @@
   },
   "homepage": "https://github.com/epii-io/epii-node-html5#readme",
   "devDependencies": {
-    "coveralls": "^2.13.1",
-    "eslint": "^3.19.0",
-    "mocha": "^3.4.2",
-    "nyc": "^11.0.2"
+    "coveralls": "^3.0.0",
+    "eslint": "^4.12.1",
+    "mocha": "^4.0.1",
+    "nyc": "^11.3.0"
   }
 }
