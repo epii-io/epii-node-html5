@@ -2,32 +2,30 @@
 
 // https://github.com/h5bp/server-configs-nginx/blob/master/mime.types
 
-var exec = require('child_process').execSync
-var fs = require('fs')
-var path = require('path')
+const exec = require('child_process').execSync;
+const fs = require('fs');
+const path = require('path');
 
-var source = exec(
+const source = exec(
   'curl -s https://raw.githubusercontent.com/h5bp/server-configs-nginx/master/mime.types',
   { encoding: 'utf8' }
-)
+);
 
-var match = source.match(/{([\s\S]*)}/)
-var lines = match[1].split('\n')
-  .filter(function (line) {
-    return line.length > 0 && !/^\s*#/.test(line)
-  })
+const match = source.match(/{([\s\S]*)}/);
+const lines = match[1].split('\n')
+  .filter(line => line.length > 0 && !/^\s*#/.test(line));
 
-var mimes = {}
-for (var i = 0; i < lines.length; i++) {
-  var line = lines[i]
-  line = line.substr(0, line.length - 1).trim()
-  var parts = line.split(/\s+/)
-  var ctype = parts[0]
-  for (var j = 1; j < parts.length; j++) {
-    mimes[parts[j]] = ctype
+const mimes = {};
+for (let i = 0; i < lines.length; i += 1) {
+  let line = lines[i];
+  line = line.substr(0, line.length - 1).trim();
+  const parts = line.split(/\s+/);
+  const ctype = parts[0];
+  for (let j = 1; j < parts.length; j += 1) {
+    mimes[parts[j]] = ctype;
   }
 }
 
-var path_ = path.resolve(path.join(__dirname, '../lib/_mimes.json'))
-console.log('write to: ' + path_)
-fs.writeFileSync(path_, JSON.stringify(mimes, null, '\t'))
+const realpath = path.resolve(path.join(__dirname, '../lib/_mimes.json'));
+console.log('write to: ' + realpath);
+fs.writeFileSync(realpath, JSON.stringify(mimes, null, '\t'));
