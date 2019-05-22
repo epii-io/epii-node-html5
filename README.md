@@ -1,64 +1,64 @@
 # epii-html5
-###### `epii-node-html5`
 
-[![Build Status](https://travis-ci.org/epii-io/epii-node-html5.svg?branch=master)](https://travis-ci.org/epii-io/epii-node-html5)
-[![Coverage Status](https://coveralls.io/repos/github/epii-io/epii-node-html5/badge.svg?branch=master)](https://coveralls.io/github/epii-io/epii-node-html5?branch=master)
+[![Build Status](https://travis-ci.org/epiijs/epii-html5.svg?branch=master)](https://travis-ci.org/epiijs/epii-html5)
+[![Coverage Status](https://coveralls.io/repos/github/epiijs/epii-html5/badge.svg?branch=master)](https://coveralls.io/github/epiijs/epii-html5?branch=master)
 
 HTML5 template for node server
 
 ## Features
 
-### not full-featured view layer
+### not full-featured view model
 
-`epii-html5` can only describe HTML5 bone document with initial state and render at server side.
-** Simple. Fast.**
+`epii-html5` provides `ViewMeta` class to define HTML5 shell, and can render `ViewMeta` object to string at server side.
+** Simple. Fast. **
 
 ### simple JSON-like template
 
-HTML5 document can be described by a JS Object that looks very simple.
+HTML5 shell can be defined by a `ViewMeta` that looks very simple.
 Also you can write JS in meta file, since `loadViewMeta` using `require` to load meta.
+A `ViewMeta` object can inherit another base `ViewMeta`.
 
-### builtin meta storage
+### builtin meta cache
 
-`epii-html5` provides builtin meta storage. There's no need to concern about meta cache.
+`epii-html5` provides builtin meta cache. There's no need to concern about meta cache.
 
 ## Usage
 
 ### install as dependency
 ```sh
-npm install --save epii-html5@latest
+npm install --save @epiijs/html5@latest
 ```
 
 ### use api to output HTML5
 ```js
-const HTML5 = require('epii-html5')
+const HTML5 = require('@epiijs/html5');
 
 // create view meta
-var meta = new HTML5.ViewMeta()
+const meta = new HTML5.ViewMeta();
 
 // mount state & inline resource
-await meta.mount({ hello: 'world' })
+await meta.mount({ hello: 'world' });
 
 // also you can specify loader for resource
 await meta.mount({}, (asset, query) => (
   fetch(asset.src)
     .then(response => response.text())
-    .then(text => asset.source = text)
-))
+    .then(text => asset.source = text);
+));
 
 // render view to HTML5
-var html = HTML5.renderToString(meta)
+const html = HTML5.renderToString(meta);
 ```
 
 ### use api to output HTML with layout
 ```js
-const HTML5 = require('epii-html5')
+const HTML5 = require('@epiijs/html5');
 
 // create meta pack
-var metaPack = new HTML5.MetaPack('/')
+const metaPack = new HTML5.MetaPack('/');
 
 // load layout meta
-var layout = metaPack.loadViewMeta({
+const layout = metaPack.loadViewMeta({
   name: 'simple',
   head: {
     title: 'simple',
@@ -68,10 +68,10 @@ var layout = metaPack.loadViewMeta({
   body: {
     launch: { src: 'launch.js', inline: true }
   }
-})
+});
 
 // load view meta, auto inherit layout
-var meta = metaPack.loadViewMeta({
+const meta = metaPack.loadViewMeta({
   base: 'simple',
   head: {
     styles: 'index.css'
@@ -79,10 +79,10 @@ var meta = metaPack.loadViewMeta({
   body: {
     scripts: 'index.js'
   }
-})
+});
 
 // render view to HTML5
-var html = HTML5.renderToString(meta)
+const html = HTML5.renderToString(meta);
 ```
 
 ## Design
@@ -156,7 +156,7 @@ var html = HTML5.renderToString(meta)
     // e.g. ReactDOM.render
     launch: 'launch.js'
   }
-}
+};
 ```
 
 ### Benchmark
