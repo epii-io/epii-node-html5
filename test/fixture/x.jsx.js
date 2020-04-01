@@ -1,5 +1,3 @@
-'use strict'
-
 const React = require('react')
 const H = React.createElement
 const Component = React.Component

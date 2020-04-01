@@ -130,28 +130,17 @@ describe('compute AssetRef', () => {
       if (scheme === 'abc') return Promise.resolve(asset.src);
       if (scheme === 'def') return Promise.reject(new Error('def'));
       if (scheme === 'omg') return 'oh my gzz';
-      if (scheme === 'xyz') {
-        return Promise.reject(new AssetRef.ChainError('xyz'));
-      }
       throw new Error('crash');
     };
     const ref1 = new AssetRef({ src: 'abc://a.js', inline: true });
     const ref2 = new AssetRef({ src: 'def://a.js', inline: true });
     const ref3 = new AssetRef({ src: 'omg://a.js', inline: true });
-    const ref4 = new AssetRef({ src: 'xyz://a.js', inline: true });
-    const ref5 = new AssetRef({ src: 'http://normal', inline: true });
+    const ref4 = new AssetRef({ src: 'http://normal', inline: true });
     return Promise.all([
       ref1.compute(loader).then(s => assert.equal(s, 'abc://a.js')),
-      ref2.compute(loader).then(s => {
-        assert.equal(s, '// epii:custom loader error');
-      }),
+      ref2.compute(loader).then(s => assert.equal(s, '// epii:def')),
       ref3.compute(loader).then(s => assert.equal(s, 'oh my gzz')),
-      ref4.compute(loader).then(s => {
-        assert.equal(s, '// epii:loader required');
-      }),
-      ref5.compute(loader).then(s => {
-        assert.equal(s, 'custom loader error');
-      })
+      ref4.compute(loader).then(s => assert.equal(s, 'crash'))
     ]);
   });
 });

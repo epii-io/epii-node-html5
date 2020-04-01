@@ -6,6 +6,8 @@
   "rules": {
     "no-var": "error",
     "prefer-const": "error",
-    "comma-dangle": "off"
+    "comma-dangle": "off",
+    "strict": ["error", "never"],
+    "no-console": ["off"]
   }
 }

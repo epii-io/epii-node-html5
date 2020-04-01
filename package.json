@@ -1,6 +1,6 @@
 {
   "name": "@epiijs/html5",
-  "version": "0.4.0",
+  "version": "0.5.1",
   "description": "HTML5 template for node server",
   "engines": {
     "node": ">=8.0.0"
@@ -29,14 +29,14 @@
   },
   "homepage": "https://github.com/epiijs/epii-html5#readme",
   "devDependencies": {
-    "coveralls": "^3.0.3",
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.17.2",
-    "mocha": "^6.1.4",
-    "nyc": "^14.1.0"
+    "coveralls": "^3.0.11",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "mocha": "^7.1.1",
+    "nyc": "^15.0.0"
   },
   "dependencies": {
-    "mime": "^2.4.3"
+    "mime": "^2.4.4"
   }
 }
