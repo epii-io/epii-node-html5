@@ -3,24 +3,84 @@
 [![Build Status](https://travis-ci.org/epiijs/epii-html5.svg?branch=master)](https://travis-ci.org/epiijs/epii-html5)
 [![Coverage Status](https://coveralls.io/repos/github/epiijs/epii-html5/badge.svg?branch=master)](https://coveralls.io/github/epiijs/epii-html5?branch=master)
 
-HTML5 template for node server
+A modern web app uses scripts to carry user interfaces instead of static HTML, however, scripts still should be run in app shell such as `index.html`. App shell contains a bit of DOM container and references of scripts and styles. `epii-html5` is a web app shell definition.
 
 ## Features
 
-### not full-featured view model
+A web app shell can be defined by a simple `ViewMeta` JSON-like model.
+Also JS can be written in definition and will be run in server.
+A `ViewMeta` object can inherit from a base `ViewMeta` object.
 
-`epii-html5` provides `ViewMeta` class to define HTML5 shell, and can render `ViewMeta` object to string at server side.
-** Simple. Fast. **
+### example for ViewMeta
 
-### simple JSON-like template
+```js
+{
+  // template name
+  name: 'modern',
 
-HTML5 shell can be defined by a `ViewMeta` that looks very simple.
-Also you can write JS in meta file, since `loadViewMeta` using `require` to load meta.
-A `ViewMeta` object can inherit another base `ViewMeta`.
+  // inherited template name
+  base: 'simple',
 
-### builtin meta cache
+  // html: 'index.html',
+  // custom everything manually
+  // head & body will be ignored
 
-`epii-html5` provides builtin meta cache. There's no need to concern about meta cache.
+  // head part of app shell
+  head: {
+    // document metas
+    metas: [
+      // name
+      { name: 'creator', content: 'epii' },
+      // http-equiv
+      { http: 'expires', content: '1 Jan 2017' },
+    ],
+
+    // document title
+    title: 'my web app',
+
+    // document icon
+    icon: 'logo.jpeg',
+
+    // document styles, String | String[]
+    styles: [
+      // simple URI
+      'style-01.css',
+
+      // inline content from local
+      { src: 'style-02.css', inline: true },
+
+      // static content
+      { source: 'p { color: red; }' }
+    ],
+
+    // document scripts, String | String[]
+    scripts: [
+      // simple URI
+      'script-01.js',
+
+      // inline content from local
+      { src: 'script-02.js', inline: true },
+
+      // static content
+      { source: 'alert(1);' }
+    ]
+  },
+
+  // body part of app shell
+  body: {
+    // app DOM container
+    // simple URI or HTML content
+    holder: { source: '<div id="app"></div>' },
+
+    // document scripts, String | String[]
+    scripts: [],
+
+    // web app launch script
+    // e.g. ReactDOM.render
+    launch: 'launch.js'
+  }
+};
+```
 
 ## Usage
 
@@ -29,7 +89,7 @@ A `ViewMeta` object can inherit another base `ViewMeta`.
 npm install --save @epiijs/html5@latest
 ```
 
-### use api to output HTML5
+### use API to output HTML5
 ```js
 const HTML5 = require('@epiijs/html5');
 
@@ -37,20 +97,21 @@ const HTML5 = require('@epiijs/html5');
 const meta = new HTML5.ViewMeta();
 
 // mount state & inline resource
+// window.epii = { state: { hello: 'world' } };
 await meta.mount({ hello: 'world' });
 
-// also you can specify loader for resource
-await meta.mount({}, (asset, query) => (
-  fetch(asset.src)
+// also you can customize loader for resource
+await meta.mount({}, (asset, query) => {
+  return fetch(asset.src)
     .then(response => response.text())
     .then(text => asset.source = text);
-));
+});
 
 // render view to HTML5
 const html = HTML5.renderToString(meta);
 ```
 
-### use api to output HTML with layout
+### use API to output HTML with layout
 ```js
 const HTML5 = require('@epiijs/html5');
 
@@ -85,86 +146,14 @@ const meta = metaPack.loadViewMeta({
 const html = HTML5.renderToString(meta);
 ```
 
-## Design
+## Benchmark
 
-### data structure
+The following table shows elapsed time for rendering app shell to string 1e5 times.
 
-`MetaPack` = [ `ViewMeta` = [ `AssetRef` ... ] ... ]
-
-### template
-
-```js
-{
-  // template name
-  name: 'modern',
-
-  // inherited template name
-  base: 'simple',
-
-  // custom document URL or content
-  // head & body will be ignored
-  // html: 'index.html',
-
-  // head part of HTML5
-  head: {
-    // HTML metas
-    metas: [
-      { name: 'keywords', content: '123' },
-      { http: 'expires', content: '1 Jan 2017' },
-    ],
-
-    // HTML title
-    title: 'my page',
-
-    // HTML icon
-    icon: 'logo.ico',
-
-    // HTML styles
-    // support String or String[]
-    styles: [
-      // simple URL
-      'style1.css',
-
-      // custom resource
-      { src: 'style2.css', inline: true },
-      { source: 'p { color: red; }' }
-    ],
-
-    // HTML scripts
-    // support String or String[]
-    scripts: [
-      // simple URL
-      'script1.js',
-
-      // custom resource
-      { src: 'script2.js', inline: true },
-      { source: 'alert(1);' }
-    ]
-  },
-
-  // body part of HTML5
-  body: {
-    // HTML placeholder
-    // simple URL or content
-    holder: { source: '<div id="app"></div>' },
-
-    // HTML scripts
-    // support String or String[]
-    scripts: [],
-
-    // web app launch script
-    // e.g. ReactDOM.render
-    launch: 'launch.js'
-  }
-};
-```
-
-### Benchmark
-
-The following table shows elapsed time for rendering bone document to string 1e5 times.
+(2020/05/03, MacBook Pro Mid 2015)
 
 |name|time|
 |-|-|
-|EPII|180ms|
-|handlebars|1300ms|
-|React|29000ms|
+|epii-html5 @ 0.5.1|125ms|
+|handlebars @ 4.7.6|2000ms|
+|react @ 16.3.1|5400ms|

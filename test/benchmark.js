@@ -11,8 +11,8 @@ async function benchmark(label, stage) {
   const time0 = new Date();
   await stage.launch(context);
   const time1 = new Date();
-  const output = '';
-  for (const i = 0; i < total; i += 1) {
+  let output = '';
+  for (let i = 0; i < total; i += 1) {
     output = await stage.render(context);
   }
   const time2 = new Date();

@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -e
 
-npm i --no-save react react-dom handlebars
+npm i --no-package-lock --no-save react react-dom handlebars

@@ -1,7 +1,7 @@
 {
   "name": "@epiijs/html5",
-  "version": "0.5.1",
-  "description": "HTML5 template for node server",
+  "version": "0.5.2",
+  "description": "A web app shell definition.",
   "engines": {
     "node": ">=8.0.0"
   },
@@ -21,7 +21,7 @@
     "html5"
   ],
   "contributors": [
-    "Sartrey Lee <sartrey@163.com> (http://sartrey.cn/)"
+    "Sartrey Lee <sartrey@163.com> (https://sartrey.cn/)"
   ],
   "license": "MIT",
   "bugs": {
@@ -37,6 +37,6 @@
     "nyc": "^15.0.0"
   },
   "dependencies": {
-    "mime": "^2.4.4"
+    "mime": "^2.4.5"
   }
 }
