@@ -5,7 +5,7 @@ lcov.info
 .nyc_output
 
 .eslintignore
-.eslintrc
+.eslintrc.json
 .gitignore
 .travis.yml
 
