@@ -24,9 +24,10 @@ async function main() {
   await benchmark('epii', {
     launch: async (context) => {
       const HTML5 = require('../');
-      const metaPack = new HTML5.MetaPack(rootDir, { source: rootDir });
-      const meta = metaPack.loadViewMeta('x.meta.js');
-      await meta.mount();
+      const viewPack = new HTML5.ViewPack(rootDir, { source: rootDir });
+      viewPack.useLoader(HTML5.FileLoader);
+      const meta = viewPack.loadViewMeta('x.meta.js');
+      await meta.mount(viewPack.loaders);
       context.HTML5 = HTML5;
       context.meta = meta;
     },

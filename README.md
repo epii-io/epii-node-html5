@@ -46,11 +46,11 @@ A `ViewMeta` object can inherit from a base `ViewMeta` object.
       // simple URI
       'style-01.css',
 
-      // inline content from local
+      // inline content from local file
       { src: 'style-02.css', inline: true },
 
-      // static content
-      { source: 'p { color: red; }' }
+      // inline content directly
+      { raw: 'p { color: red; }' }
     ],
 
     // document scripts, String | String[]
@@ -58,11 +58,11 @@ A `ViewMeta` object can inherit from a base `ViewMeta` object.
       // simple URI
       'script-01.js',
 
-      // inline content from local
+      // inline content from local file
       { src: 'script-02.js', inline: true },
 
-      // static content
-      { source: 'alert(1);' }
+      // inline content directly
+      { raw: 'alert(1);' }
     ]
   },
 
@@ -70,7 +70,7 @@ A `ViewMeta` object can inherit from a base `ViewMeta` object.
   body: {
     // app DOM container
     // simple URI or HTML content
-    holder: { source: '<div id="app"></div>' },
+    holder: { raw: '<div id="app"></div>' },
 
     // document scripts, String | String[]
     scripts: [],
@@ -93,19 +93,16 @@ npm install --save @epiijs/html5@latest
 ```js
 const HTML5 = require('@epiijs/html5');
 
+// get default local file loader
+const loader = new HTML5.FileLoader();
+
 // create view meta
-const meta = new HTML5.ViewMeta();
+const view = new HTML5.ViewMeta();
+
 
 // mount state & inline resource
 // window.epii = { state: { hello: 'world' } };
-await meta.mount({ hello: 'world' });
-
-// also you can customize loader for resource
-await meta.mount({}, (asset, query) => {
-  return fetch(asset.src)
-    .then(response => response.text())
-    .then(text => asset.source = text);
-});
+await view.mount([loader], { hello: 'world' });
 
 // render view to HTML5
 const html = HTML5.renderToString(meta);
@@ -116,10 +113,10 @@ const html = HTML5.renderToString(meta);
 const HTML5 = require('@epiijs/html5');
 
 // create meta pack
-const metaPack = new HTML5.MetaPack('/');
+const viewPack = new HTML5.ViewPack('/');
 
 // load layout meta
-const layout = metaPack.loadViewMeta({
+const layout = viewPack.loadViewMeta({
   name: 'simple',
   head: {
     title: 'simple',
@@ -132,7 +129,7 @@ const layout = metaPack.loadViewMeta({
 });
 
 // load view meta, auto inherit layout
-const meta = metaPack.loadViewMeta({
+const meta = viewPack.loadViewMeta({
   base: 'simple',
   head: {
     styles: 'index.css'
@@ -146,14 +143,46 @@ const meta = metaPack.loadViewMeta({
 const html = HTML5.renderToString(meta);
 ```
 
+### custom loader
+```js
+class CustomLoader extends HTML5.Loader {
+  constructor(options) {
+    super(options);
+    // parse your own loader query
+  }
+
+  match(asset) {
+    // filter assets
+    return true;
+  }
+
+  async mount(asset) {
+    // mount asset as you wish
+    if (asset.mounted) return;
+    return fetch(asset.src)
+      .then(response => response.text())
+      .then((text) => {
+        asset.raw = text;
+        asset.mounted = true;
+      });
+  }
+}
+
+// use loader for view pack
+viewPack.useLoader(CustomLoader, { ...options });
+
+// mount meta with view pack loaders
+viewMeta.mount(viewPack.loaders, {});
+```
+
 ## Benchmark
 
 The following table shows elapsed time for rendering app shell to string 1e5 times.
 
-(2020/05/03, MacBook Pro Mid 2015)
+(2021/02/20, MacBook Pro 2019)
 
 |name|time|
 |-|-|
-|epii-html5 @ 0.5.1|125ms|
-|handlebars @ 4.7.6|2000ms|
-|react @ 16.3.1|5400ms|
+|epii-html5 @ 1.0.0|96ms|
+|handlebars @ 4.7.7|1600ms|
+|react @ 17.0.1|4474ms|

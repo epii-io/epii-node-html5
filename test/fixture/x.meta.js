@@ -12,7 +12,7 @@ module.exports = {
 
   body: {
     holder: {
-      source: '<div id="app"></div>'
+      raw: '<div id="app"></div>'
     },
     scripts: [
       'layout.js',

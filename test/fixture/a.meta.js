@@ -10,13 +10,13 @@ module.exports = {
     ],
     styles: [
       'a.css',
-      { source: 'a{color:blue;}' }
+      { raw: 'a{color:blue;}' }
     ],
     scripts: 'a1.js'
   },
 
   body: {
-    holder: { source: '<div id="app"></div>' },
+    holder: { raw: '<div id="app"></div>' },
     scripts: 'a2.js',
     launch: 'launch.js'
   }

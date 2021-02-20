@@ -1,9 +1,9 @@
-/* global describe it Promise */
+/* global describe it */
 
 const assert = require('assert');
-const path = require('path');
 const HTML5 = require('../');
 const AssetRef = HTML5.AssetRef;
+const { PO } = require('./testkit');
 
 describe('new AssetRef', () => {
   it('empty ref', () => {
@@ -15,41 +15,45 @@ describe('new AssetRef', () => {
 
   it('string ref', () => {
     const ref = new AssetRef('a.js');
-    assert.deepEqual(ref, {
-      type: 'application/javascript',
+    assert.deepStrictEqual(PO(ref), {
       src: 'a.js',
-      source: null,
-      inline: false
+      raw: null,
+      type: 'application/javascript',
+      inline: false,
+      mounted: false,
     });
   });
 
   it('empty object ref', () => {
     const ref = new AssetRef({});
-    assert.deepEqual(ref, {
-      type: 'text/plain',
+    assert.deepStrictEqual(PO(ref), {
       src: '',
-      source: null,
-      inline: false
+      raw: null,
+      type: 'text/plain',
+      inline: false,
+      mounted: false,
     });
   });
 
   it('object ref', () => {
     const ref = new AssetRef({ src: 'a.css', inline: true });
-    assert.deepEqual(ref, {
-      type: 'text/css',
+    assert.deepStrictEqual(PO(ref), {
       src: 'a.css',
-      source: null,
-      inline: true
+      raw: null,
+      type: 'text/css',
+      inline: true,
+      mounted: false,
     });
   });
 
   it('function ref', () => {
     const ref = new AssetRef(() => () => () => () => 'index.html');
-    assert.deepEqual(ref, {
-      type: 'text/html',
+    assert.deepStrictEqual(PO(ref), {
       src: 'index.html',
-      source: null,
-      inline: false
+      raw: null,
+      type: 'text/html',
+      inline: false,
+      mounted: false,
     });
   });
 });
@@ -59,9 +63,9 @@ describe('AssetRef getter', () => {
     const ref1 = new AssetRef('a.txt');
     const ref2 = new AssetRef('//a.txt');
     const ref3 = new AssetRef('az09.-+://a.txt');
-    assert.equal(ref1.getScheme(), '');
-    assert.equal(ref2.getScheme(), 'https');
-    assert.equal(ref3.getScheme(), 'az09.-+');
+    assert.strictEqual(ref1.getScheme(), '');
+    assert.strictEqual(ref2.getScheme(), 'https');
+    assert.strictEqual(ref3.getScheme(), 'az09.-+');
   });
 
   it('get encoding', () => {
@@ -69,10 +73,10 @@ describe('AssetRef getter', () => {
     const ref2 = new AssetRef('a.js');
     const ref3 = new AssetRef('a.json');
     const ref4 = new AssetRef('a.jpg');
-    assert.equal(ref1.getEncoding(), 'utf8');
-    assert.equal(ref2.getEncoding(), 'utf8');
-    assert.equal(ref3.getEncoding(), 'utf8');
-    assert.equal(ref4.getEncoding(), undefined);
+    assert.strictEqual(ref1.getEncoding(), 'utf8');
+    assert.strictEqual(ref2.getEncoding(), 'utf8');
+    assert.strictEqual(ref3.getEncoding(), 'utf8');
+    assert.strictEqual(ref4.getEncoding(), undefined);
   });
 
   it('get comment', () => {
@@ -80,67 +84,10 @@ describe('AssetRef getter', () => {
     const ref2 = new AssetRef('a.css');
     const ref3 = new AssetRef('a.js');
     const ref4 = new AssetRef('a.jpg');
-    assert.equal(ref1.getComment('test'), '<!-- epii:test -->');
-    assert.equal(ref2.getComment('test'), '/* epii:test */');
-    assert.equal(ref3.getComment('test'), '// epii:test');
-    assert.equal(ref4.getComment('test'), 'test');
-    assert.equal(ref4.getComment(), 'error');
-  });
-});
-
-describe('compute AssetRef', () => {
-  it('fix url with prefix', () => {
-    const ref1 = new AssetRef({ src: 'a.js' });
-    const ref2 = new AssetRef({ src: 'a.js' });
-    const ref3 = new AssetRef({ src: 'abc://a.js' });
-    // always assert absolute src
-    return Promise.all([
-      ref1.compute().then(() => assert.equal(ref1.src, '/a.js')),
-      ref2.compute({ prefix: '/_abc' }).then(() => {
-        assert.equal(ref2.src, '/_abc/a.js');
-      }),
-      ref3.compute().then(() => assert.equal(ref3.src, 'abc://a.js'))
-    ]);
-  });
-
-  it('load local file', () => {
-    const ref1 = new AssetRef({ src: 'a.js', inline: true });
-    const ref2 = new AssetRef({ src: 'a.js', inline: true });
-    const ref3 = new AssetRef({ source: 'abc' });
-    return Promise.all([
-      ref1.compute().then(s => {
-        assert.equal(s, '// epii:file system error');
-        assert.equal(ref1.source, null);
-      }),
-      ref2.compute({ source: path.join(__dirname, 'fixture') }).then(s => {
-        assert.equal(s, 'alert(1)\n');
-        assert.equal(ref2.source, 'alert(1)\n');
-      }),
-      ref3.compute().then(s => {
-        assert.equal(s, 'abc');
-        assert.equal(ref3.source, 'abc');
-      })
-    ]);
-  });
-
-  it('custom loader', () => {
-    const loader = (asset, query) => {
-      console.log(query);
-      const scheme = asset.getScheme();
-      if (scheme === 'abc') return Promise.resolve(asset.src);
-      if (scheme === 'def') return Promise.reject(new Error('def'));
-      if (scheme === 'omg') return 'oh my gzz';
-      throw new Error('crash');
-    };
-    const ref1 = new AssetRef({ src: 'abc://a.js', inline: true });
-    const ref2 = new AssetRef({ src: 'def://a.js', inline: true });
-    const ref3 = new AssetRef({ src: 'omg://a.js', inline: true });
-    const ref4 = new AssetRef({ src: 'http://normal', inline: true });
-    return Promise.all([
-      ref1.compute(loader).then(s => assert.equal(s, 'abc://a.js')),
-      ref2.compute(loader).then(s => assert.equal(s, '// epii:def')),
-      ref3.compute(loader).then(s => assert.equal(s, 'oh my gzz')),
-      ref4.compute(loader).then(s => assert.equal(s, 'crash'))
-    ]);
+    assert.strictEqual(ref1.getComment('test'), '<!-- epii:test -->');
+    assert.strictEqual(ref2.getComment('test'), '/* epii:test */');
+    assert.strictEqual(ref3.getComment('test'), '// epii:test');
+    assert.strictEqual(ref4.getComment('test'), 'test');
+    assert.strictEqual(ref4.getComment(), 'error');
   });
 });
